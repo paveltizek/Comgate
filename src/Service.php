@@ -2,11 +2,11 @@
 
 namespace LZaplata\Comgate;
 
+use Nette\SmartObject;
 
-use Nette\Object;
-
-class Service extends Object
+class Service
 {
+    use SmartObject;
     /** @var string */
     public $merchant;
 
@@ -156,9 +156,9 @@ class Service extends Object
      * @return Payment
      * @throws \Exception
      */
-    public function createPayment($price)
+    public function createPayment($price, $dir)
     {
-        $payment = new Payment($this);
+        $payment = new Payment($this, $dir);
         $payment->createPayment($price);
 
         return $payment;

@@ -4,11 +4,13 @@ namespace LZaplata\Comgate;
 
 
 use Nette\Application\Responses\RedirectResponse;
-use Nette\Object;
+
+use Nette\SmartObject;
 use Tracy\Debugger;
 
-class Response extends Object
+class Response
 {
+    use SmartObject;
     /** @var \AgmoPaymentsSimpleProtocol */
     private $paymentsProtocol;
 

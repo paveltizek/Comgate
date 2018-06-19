@@ -3,10 +3,11 @@
 namespace LZaplata\Comgate;
 
 
-use Nette\Object;
+use Nette\SmartObject;
 
-class Payment extends Object
+class Payment
 {
+    use SmartObject;
     /** @var Service */
     public $service;
 
@@ -56,15 +57,18 @@ class Payment extends Object
 
     private $country;
 
-    public function __construct(Service $service)
+    private $filename;
+
+    public function __construct(Service $service ,$dir)
     {
-        if (!file_exists(__DIR__ . "/data")) {
-            mkdir(__DIR__ . "/data");
+        $this->filename = $dir;
+        if (!file_exists($this->filename)) {
+            mkdir($this->filename);
         }
 
         $this->service = $service;
         $this->paymentsDatabase = new \AgmoPaymentsSimpleDatabase(
-            dirname(__FILE__) . "/data",
+            $dir,
             $this->service->getMerchant(),
             $this->service->getSecret()
         );
@@ -143,6 +147,25 @@ class Payment extends Object
 
         return new Response($this->paymentsProtocol, $this->service);
     }
+
+    /**
+     * @return string
+     */
+    public function getFilename(): string {
+        return $this->filename;
+    }
+
+    /**
+     * @param string $filename
+     * @return Payment
+     */
+    public function setFilename(string $filename): Payment {
+        $this->filename = $filename;
+        return $this;
+    }
+
+
+
 
     /**
      * @return int
