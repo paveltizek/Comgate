@@ -56,7 +56,7 @@ class Response
     public function isOk()
     {
         try {
-            $payment = new Payment($this->service);
+            $payment = new Payment($this->service, $this->service->getLogDir());
             $payment->paymentsProtocol->checkTransactionStatus($_POST);
 
             $this->payId = $payment->paymentsProtocol->getTransactionStatusTransId();

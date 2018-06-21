@@ -24,6 +24,7 @@ class Service
 
     /** @var bool */
     public $preauth;
+    private $logDir;
 
     /**
      * Service constructor.
@@ -32,14 +33,16 @@ class Service
      * @param bool $sandbox
      * @param string $currency
      * @param bool $preauth
+     * @param $logDir
      */
-    public function __construct($merchant, $secret, $sandbox, $currency, $preauth)
+    public function __construct($merchant, $secret, $sandbox, $currency, $preauth, $logDir)
     {
         $this->setMerchant($merchant);
         $this->setSecret($secret);
         $this->setSandbox($sandbox);
         $this->setCurrency($currency);
         $this->setPreauth($preauth);
+        $this->logDir = $logDir;
     }
 
     /**
@@ -171,4 +174,13 @@ class Service
     {
         return new Response(null, $this);
     }
+
+    /**
+     * @return mixed
+     */
+    public function getLogDir() {
+        return $this->logDir;
+    }
+
+
 }
