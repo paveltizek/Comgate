@@ -62,13 +62,16 @@ class Payment
     public function __construct(Service $service ,$dir)
     {
         $this->filename = $dir;
-        if (!file_exists($this->filename)) {
-            mkdir($this->filename);
+//        if (!file_exists($this->filename)) {
+//            mkdir($this->filename);
+//        }
+        if (!file_exists(__DIR__ . "/data")) {
+            mkdir(__DIR__ . "/data");
         }
 
         $this->service = $service;
         $this->paymentsDatabase = new \AgmoPaymentsSimpleDatabase(
-            $dir,
+            __DIR__ . "/data",
             $this->service->getMerchant(),
             $this->service->getSecret()
         );
