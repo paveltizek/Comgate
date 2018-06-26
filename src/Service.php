@@ -35,8 +35,7 @@ class Service
      * @param bool $preauth
      * @param $logDir
      */
-    public function __construct($merchant, $secret, $sandbox, $currency, $preauth, $logDir)
-    {
+    public function __construct($merchant, $secret, $sandbox, $currency, $preauth, $logDir) {
         $this->setMerchant($merchant);
         $this->setSecret($secret);
         $this->setSandbox($sandbox);
@@ -49,8 +48,7 @@ class Service
      * @param string $merchant
      * @return self
      */
-    public function setMerchant($merchant)
-    {
+    public function setMerchant($merchant) {
         $this->merchant = (string)$merchant;
 
         return $this;
@@ -59,8 +57,7 @@ class Service
     /**
      * @return string
      */
-    public function getMerchant()
-    {
+    public function getMerchant() {
         return $this->merchant;
     }
 
@@ -68,8 +65,7 @@ class Service
      * @param string $secret
      * @return self
      */
-    public function setSecret($secret)
-    {
+    public function setSecret($secret) {
         $this->secret = (string)$secret;
 
         return $this;
@@ -78,8 +74,7 @@ class Service
     /**
      * @return string
      */
-    public function getSecret()
-    {
+    public function getSecret() {
         return $this->secret;
     }
 
@@ -87,8 +82,7 @@ class Service
      * @param int $sandbox
      * @return self
      */
-    public function setSandbox($sandbox)
-    {
+    public function setSandbox($sandbox) {
         $this->sandbox = $sandbox;
 
         if ($sandbox) {
@@ -103,16 +97,14 @@ class Service
     /**
      * @return bool
      */
-    public function getSandbox()
-    {
+    public function getSandbox() {
         return $this->sandbox;
     }
 
     /**
      * @return string
      */
-    public function getUrl()
-    {
+    public function getUrl() {
         return $this->url;
     }
 
@@ -120,8 +112,7 @@ class Service
      * @param string $currency
      * @return self
      */
-    public function setCurrency($currency)
-    {
+    public function setCurrency($currency) {
         $this->currency = $currency;
 
         return $this;
@@ -130,8 +121,7 @@ class Service
     /**
      * @return string
      */
-    public function getCurrency()
-    {
+    public function getCurrency() {
         return $this->currency;
     }
 
@@ -139,8 +129,7 @@ class Service
      * @param $preauth
      * @return self
      */
-    public function setPreauth($preauth)
-    {
+    public function setPreauth($preauth) {
         $this->preauth = $preauth;
 
         return $this;
@@ -149,8 +138,7 @@ class Service
     /**
      * @return bool
      */
-    public function getPreauth()
-    {
+    public function getPreauth() {
         return $this->preauth;
     }
 
@@ -159,9 +147,39 @@ class Service
      * @return Payment
      * @throws \Exception
      */
-    public function createPayment($price, $dir)
-    {
+    public function createPayment($price, $dir,
+                                  $vatPL = "STANDARD",
+                                  $category = "PHYSICAL",
+                                  $label = "payment",
+                                  $payerId = null,
+                                  $method = "ALL",
+                                  $account = "",
+                                  $email = "",
+                                  $phone = "",
+                                  $productName = "",
+                                  $language = "",
+                                  $reccurring = false,
+                                  $reccurringId = null,
+                                  $eetReport = false,
+                                  $eetData = null,
+                                  $country = "CZ"
+    ) {
         $payment = new Payment($this, $dir);
+        $payment->setVatPL($vatPL)
+            ->setCategory($category)
+            ->setLabel($label)
+            ->setPayerId($payerId)
+            ->setMethod($method)
+            ->setAccount($account)
+            ->setEmail($email)
+            ->setPhone($phone)
+            ->setProductName($productName)
+            ->setLanguage($language)
+            ->setReccurring($reccurring)
+            ->setReccurringId($reccurringId)
+            ->setEetReport($eetReport)
+            ->setEetData($eetData)
+            ->setCountry($country);
         $payment->createPayment($price);
 
         return $payment;
@@ -170,8 +188,7 @@ class Service
     /**
      * @return Response
      */
-    public function getReturnResponse()
-    {
+    public function getReturnResponse() {
         return new Response(null, $this);
     }
 
