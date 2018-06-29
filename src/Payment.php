@@ -65,13 +65,13 @@ class Payment
 //        if (!file_exists($this->filename)) {
 //            mkdir($this->filename);
 //        }
-        if (!file_exists(__DIR__ . "/data")) {
-            mkdir(__DIR__ . "/data");
+        if (!file_exists($dir . "/data")) {
+            mkdir($dir . "/data");
         }
 
         $this->service = $service;
         $this->paymentsDatabase = new \AgmoPaymentsSimpleDatabase(
-            __DIR__ . "/data",
+            $dir . "/data",
             $this->service->getMerchant(),
             $this->service->getSecret()
         );
@@ -103,9 +103,9 @@ class Payment
      * @param $price
      * @throws \Exception
      */
-    public function createPayment($price)
+    public function createPayment($price, $refId = null)
     {
-        $this->refId = $this->paymentsDatabase->createNextRefId();
+        $this->refId = $refId ? $refId : $this->paymentsDatabase->createNextRefId();
         $this->price = $price;
 
 

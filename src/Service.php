@@ -147,7 +147,7 @@ class Service
      * @return Payment
      * @throws \Exception
      */
-    public function createPayment($price, $dir,
+    public function createPayment($price, $refId = null, $dir,
                                   $vatPL = "STANDARD",
                                   $category = "PHYSICAL",
                                   $label = "payment",
@@ -166,6 +166,7 @@ class Service
     ) {
         $payment = new Payment($this, $dir);
         $payment->setVatPL($vatPL)
+            ->setRefId($refId)
             ->setCategory($category)
             ->setLabel($label)
             ->setPayerId($payerId)
@@ -180,7 +181,7 @@ class Service
             ->setEetReport($eetReport)
             ->setEetData($eetData)
             ->setCountry($country);
-        $payment->createPayment($price);
+        $payment->createPayment($price, $refId);
 
         return $payment;
     }
