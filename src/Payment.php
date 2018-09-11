@@ -140,6 +140,7 @@ class Payment
     {
         $transId = $this->paymentsProtocol->getTransactionId();
 
+        \Tracy\Debugger::barDump($this->refId, '$this->refId');
         $this->paymentsDatabase->saveTransaction(
             $transId,                                           // transId
             $this->refId,                                       // refId

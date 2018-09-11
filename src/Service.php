@@ -187,6 +187,21 @@ class Service
     }
 
     /**
+     * @param float $price
+     * @return Refund
+     * @throws \Exception
+     */
+    public function createRefund($transId, $price, $refId = null, $dir
+
+    ) {
+        $refund = new Refund($this, $dir);
+
+        $refund->createRefund($transId, $price, $refId);
+
+        return $refund;
+    }
+
+    /**
      * @return Response
      */
     public function getReturnResponse() {

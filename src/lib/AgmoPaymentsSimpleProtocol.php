@@ -164,7 +164,7 @@ class AgmoPaymentsSimpleProtocol {
         $this->_redirectUrl = NULL;
 
         // prepare request body
-        $requestParams = array(
+        $requestParams = [
             'merchant' => $this->_merchant,
             'test' => ($this->_test ? 'true' : 'false'),
             'country' => $country,
@@ -187,7 +187,7 @@ class AgmoPaymentsSimpleProtocol {
             'initRecurring' => $reccurring ? 'true' : 'false',
             'eetReport' => $eetReport,
             'eetData' => (!empty($eetData) && is_array($eetData)) ? json_encode($eetData) : $eetData
-        );
+        ];
 
         if ($reccurringId != null) {
             $requestParams['initRecurringId'] = $reccurringId;
@@ -215,6 +215,57 @@ class AgmoPaymentsSimpleProtocol {
         $this->_redirectUrl = $this->_checkParam($responseParams, 'redirect');
 
     }
+
+    /**
+     * creates new refund transaction
+     * @param string $transId
+     * @param $amount
+     * @param $currency
+     * @throws Exception
+     */
+    public function refundTransaction(string $transId,  $amount, $currency) {
+
+        // initialize response variables
+        $this->_transactionId = NULL;
+        $this->_redirectUrl = NULL;
+
+        // prepare request body
+        $requestParams = [
+            'transId' => $transId,
+            'merchant' => $this->_merchant,
+            'test' => ($this->_test ? 'true' : 'false'),
+            'amount' => round($amount * 100),
+            'curr' => $currency,
+            'secret' => $this->_secret
+        ];
+
+        if ($reccurringId != null) {
+            $requestParams['initRecurringId'] = $reccurringId;
+        }
+
+        $requestBody = $this->_encodeParams($requestParams);
+
+        if ($reccurringId != null) {
+            $url = $this->_paymentsUrl2;
+        } else {
+            $url = $this->_paymentsUrl;
+        }
+
+        // do HTTP request
+        $responseBody = $this->_doHttpPost($url, $requestBody);
+
+        // process HTTP response
+        $responseParams = $this->_decodeParams($responseBody);
+        $responseCode = $this->_checkParam($responseParams, 'code');
+        $responseMessage = $this->_checkParam($responseParams, 'message');
+        if ($responseCode !== '0' || $responseMessage !== 'OK') {
+            throw new Exception('Transaction creation error '.$responseCode.': '.$responseMessage);
+        }
+        $this->_transactionId = $this->_checkParam($responseParams, 'transId');
+        $this->_redirectUrl = $this->_checkParam($responseParams, 'redirect');
+
+    }
+
 
     /**
      * returns an identifier of the transaction created via createTransaction method
