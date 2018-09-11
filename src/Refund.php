@@ -73,7 +73,7 @@ class Refund
         $this->paymentsProtocol->refundTransaction(
             $transId,                                               // trans id
             $price,                                             // price
-            $this->service->getCurrency(),                      // currency
+            $this->service->getCurrency()                  // currency
 
         );
     }

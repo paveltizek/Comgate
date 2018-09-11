@@ -2,8 +2,7 @@
 
 class AgmoPaymentsSimpleProtocol {
 
-    private $_paymentsUrl;
-    private $_paymentsUrl2; // pro opakovane platby
+    private $_refundUrl;
     private $_merchant;
     private $_test;
     private $_secret;
@@ -23,9 +22,8 @@ class AgmoPaymentsSimpleProtocol {
      *      merchants password (used for background HTTP communication)
      * @param $paymentsUrl2
      */
-    public function __construct($paymentsUrl, $merchant, $test, $secret = NULL, $paymentsUrl2 = NULL) {
-        $this->_paymentsUrl = $paymentsUrl;
-        $this->_paymentsUrl2 = $paymentsUrl2;
+    public function __construct($refundUrl, $merchant, $test, $secret = NULL) {
+        $this->_refundUrl = $refundUrl;
         $this->_merchant = $merchant;
         $this->_test = $test;
         $this->_secret = $secret;
@@ -239,17 +237,17 @@ class AgmoPaymentsSimpleProtocol {
             'secret' => $this->_secret
         ];
 
-        if ($reccurringId != null) {
-            $requestParams['initRecurringId'] = $reccurringId;
-        }
+//        if ($reccurringId != null) {
+//            $requestParams['initRecurringId'] = $reccurringId;
+//        }
 
         $requestBody = $this->_encodeParams($requestParams);
 
-        if ($reccurringId != null) {
-            $url = $this->_paymentsUrl2;
-        } else {
-            $url = $this->_paymentsUrl;
-        }
+//        if ($reccurringId != null) {
+//            $url = $this->_paymentsUrl2;
+//        } else {
+            $url = $this->_refundUrl;
+//        }
 
         // do HTTP request
         $responseBody = $this->_doHttpPost($url, $requestBody);
@@ -259,7 +257,7 @@ class AgmoPaymentsSimpleProtocol {
         $responseCode = $this->_checkParam($responseParams, 'code');
         $responseMessage = $this->_checkParam($responseParams, 'message');
         if ($responseCode !== '0' || $responseMessage !== 'OK') {
-            throw new Exception('Transaction creation error '.$responseCode.': '.$responseMessage);
+            throw new Exception('Transaction creation error '.$responseCode.': '.$responseMessage, $responseCode);
         }
         $this->_transactionId = $this->_checkParam($responseParams, 'transId');
         $this->_redirectUrl = $this->_checkParam($responseParams, 'redirect');
