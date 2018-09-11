@@ -193,10 +193,15 @@ class Service
      */
     public function createRefund($transId, $price, $refId = null, $dir) {
         $refund = new Refund($this, $dir);
-
         $refund->createRefund($transId, $price, $refId);
-
         return $refund;
+    }
+
+    public function getStatus($transId, $dir) {
+        $status = new Status($this, $dir);
+        $s = $status->getStatus($transId);
+        
+        return $s;
     }
 
     /**

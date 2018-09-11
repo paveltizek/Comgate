@@ -2,7 +2,8 @@
 
 class AgmoPaymentsSimpleProtocol {
 
-    private $_refundUrl;
+    private $_paymentsUrl;
+    private $_paymentsUrl2; // pro opakovane platby
     private $_merchant;
     private $_test;
     private $_secret;
@@ -22,8 +23,9 @@ class AgmoPaymentsSimpleProtocol {
      *      merchants password (used for background HTTP communication)
      * @param $paymentsUrl2
      */
-    public function __construct($refundUrl, $merchant, $test, $secret = NULL) {
-        $this->_refundUrl = $refundUrl;
+    public function __construct($paymentsUrl, $merchant, $test, $secret = NULL, $paymentsUrl2 = NULL) {
+        $this->_paymentsUrl = $paymentsUrl;
+        $this->_paymentsUrl2 = $paymentsUrl2;
         $this->_merchant = $merchant;
         $this->_test = $test;
         $this->_secret = $secret;
@@ -246,7 +248,7 @@ class AgmoPaymentsSimpleProtocol {
 //        if ($reccurringId != null) {
 //            $url = $this->_paymentsUrl2;
 //        } else {
-            $url = $this->_refundUrl;
+        $url = $this->_paymentsUrl;
 //        }
 
         // do HTTP request
@@ -263,8 +265,50 @@ class AgmoPaymentsSimpleProtocol {
         $this->_redirectUrl = $this->_checkParam($responseParams, 'redirect');
 
     }
+    
+    public function getPaymentStatus(string $transId) {
 
+        // initialize response variables
+        $this->_transactionId = NULL;
+        $this->_redirectUrl = NULL;
 
+        // prepare request body
+        $requestParams = [
+            'transId' => $transId,
+            'merchant' => $this->_merchant,
+            'secret' => $this->_secret
+        ];
+
+//        if ($reccurringId != null) {
+//            $requestParams['initRecurringId'] = $reccurringId;
+//        }
+
+        \Tracy\Debugger::barDump($requestParams, '$requestParams');
+        $requestBody = $this->_encodeParams($requestParams);
+
+//        if ($reccurringId != null) {
+//            $url = $this->_paymentsUrl2;
+//        } else {
+        $url = $this->_paymentsUrl;
+//        }
+
+        // do HTTP request
+        $responseBody = $this->_doHttpPost($url, $requestBody);
+
+        // process HTTP response
+        $responseParams = $this->_decodeParams($responseBody);
+        \Tracy\Debugger::barDump($responseParams, '$responseParams');
+        $responseCode = $this->_checkParam($responseParams, 'code');
+        $responseMessage = $this->_checkParam($responseParams, 'message');
+        if ($responseCode !== '0' || $responseMessage !== 'OK') {
+            throw new Exception('Transaction creation error '.$responseCode.': '.$responseMessage, $responseCode);
+        }
+        $this->_transactionId = $this->_checkParam($responseParams, 'transId');
+//        $this->_redirectUrl = $this->_checkParam($responseParams, 'redirect');
+
+        return $responseParams;
+    }
+    
     /**
      * returns an identifier of the transaction created via createTransaction method
      *
